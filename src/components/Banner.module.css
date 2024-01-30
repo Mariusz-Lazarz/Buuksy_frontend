@@ -1,0 +1,6 @@
+.background {
+  position: relative;
+  background-image: url("../../public/img/barbers.jpg");
+  background-size: cover;
+  background-position: 50% 20%;
+}

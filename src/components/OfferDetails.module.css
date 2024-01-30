@@ -1,0 +1,10 @@
+.employee-card {
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: border-color 0.3s ease;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
