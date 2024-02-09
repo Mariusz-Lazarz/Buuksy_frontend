@@ -3,7 +3,7 @@ import { getToken } from "./AuthUtils";
 
 const API_BASE_URL =
   process.env.NODE_ENV === "production"
-    ? "/api/v1"
+    ? process.env.REACT_PROD_API_URL
     : process.env.REACT_APP_API_BASE_URL;
 
 
