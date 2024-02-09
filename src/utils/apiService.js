@@ -1,8 +1,12 @@
 import axios from "axios";
 import { getToken } from "./AuthUtils";
 
-const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
-// defining api calls
+const API_BASE_URL =
+  process.env.NODE_ENV === "production"
+    ? "/api/v1"
+    : process.env.REACT_APP_API_BASE_URL;
+
+
 export const apiService = {
   login: (formData) => axios.post(`${API_BASE_URL}/auth/login`, formData),
   register: (formData) => axios.post(`${API_BASE_URL}/auth/register`, formData),
