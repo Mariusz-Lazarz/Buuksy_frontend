@@ -4,7 +4,8 @@
   status = 200
 
 [[redirects]]
-  from = "/api/*"
-  to = "http://146.59.95.173:8000/api/:splat"
+  from = "/api/v1/*"
+  to = "http://146.59.95.173:8000/api/v1/:splat"
   status = 200
   force = true
+
