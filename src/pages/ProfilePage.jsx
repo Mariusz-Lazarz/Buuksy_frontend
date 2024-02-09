@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useMemo } from "react";
-import axios from "axios";
+import { useState, useEffect, useMemo } from "react";
+import { apiService } from "../utils/apiService";
 import Container from "../components/Container";
 import VisitsCard from "../components/VisitsCard";
-import { getUserData, getToken } from "../utils/AuthUtils";
+import { getUserData } from "../utils/AuthUtils";
 import VisitsCardSkeleton from "../components/VisitsCardSkeleton";
 
 export default function ProfilePage() {
@@ -17,15 +17,8 @@ export default function ProfilePage() {
       setIsLoading(true);
       const fetchVisits = async () => {
         try {
-          const response = await axios.get(
-            "http://localhost:3001/api/v1/visits/user",
-            {
-              headers: {
-                Authorization: `Bearer ${getToken()}`,
-              },
-            }
-          );
-          setVisits(response.data.visits);
+          const data = await apiService.fetchUserVisits();
+          setVisits(data.visits);
         } catch (error) {
           console.error("Error fetching visits data:", error);
         }

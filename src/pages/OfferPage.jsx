@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "../components/Container";
 import { useSearchParams } from "react-router-dom";
 import OfferCard from "../components/OfferCard";
 import OfferCardSkeleton from "../components/OfferCardSkeleton";
-import axios from "axios";
+import { apiService } from "../utils/apiService";
 import Categories from "../components/Categories";
 import { toast } from "react-toastify";
 
@@ -16,22 +16,16 @@ export default function OfferPage() {
   const anticipatedItemCount = 5;
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       setIsLoading(true);
-      let url = "http://localhost:3001/api/v1/salons";
-
-      if (category) {
-        url += `?category=${category}`;
-      }
-
       try {
-        const response = await axios.get(url);
-        setItems(response.data);
+        const data = await apiService.fetchSalons(category);
+        setItems(data);
       } catch (error) {
-        toast.error("Failed to get resources, please try again", {});
+        toast.error("Failed to get resources, please try again");
       }
       setIsLoading(false);
-    }
+    };
 
     fetchData();
   }, [category]);

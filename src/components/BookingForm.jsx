@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import BookingFormSkeleton from "./BookingFormSkeleton";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { isLoggedIn, getUserData } from "../utils/AuthUtils";
 import { toast } from "react-toastify";
-import axios from "axios";
 import styles from "./BookingForm.module.css";
+import { apiService } from "../utils/apiService";
 const FULL_HOURS = [
   "09:00",
   "10:00",
@@ -97,60 +97,49 @@ export default function BookingForm({ service, item, hideForm }) {
         date: dateTime,
       };
 
-      const responses = await Promise.all([
-        axios.post("http://localhost:3001/api/v1/visits/user", commonData),
-        axios.post("http://localhost:3001/api/v1/visits/employee", commonData),
-      ]);
-
-      if (responses.some((response) => response.status !== 201)) {
-        return toast.error("An error occurred while booking the visit.");
-      }
+      await apiService.bookVisit(commonData);
 
       hideForm();
       return toast.success("Your visit has been booked successfully.");
     } catch (error) {
+      console.error("Booking error:", error);
       return toast.error(error.message || "An error occurred.");
     }
   };
 
   useEffect(() => {
     const checkAvailability = async () => {
-      if (!startDate) return;
-
-      if (!selectedEmployeeId) {
+      if (!startDate || !selectedEmployeeId) {
         setAvailableHours(getFilteredHours());
         return;
       }
       try {
         setIsLoading(true);
-        const response = await axios.post(
-          "http://localhost:3001/api/v1/visits/availability",
-          {
-            date: startDate,
-            salonId: item._id,
-            employeeId: selectedEmployeeId,
-          }
-        );
+        const data = await apiService.checkAvailability({
+          date: startDate,
+          salonId: item._id,
+          employeeId: selectedEmployeeId,
+        });
 
         let updatedAvailableHours = getFilteredHours();
 
-        if (response.data.bookedSlots && response.data.bookedSlots.length > 0) {
-          const bookedSlots = response.data.bookedSlots;
+        if (data.bookedSlots && data.bookedSlots.length > 0) {
+          const bookedSlots = data.bookedSlots;
           updatedAvailableHours = updatedAvailableHours.filter(
             (hour) => !bookedSlots.includes(hour)
           );
         }
 
         setAvailableHours(updatedAvailableHours);
-        setIsLoading(false);
       } catch (error) {
+        console.error("Error checking availability:", error);
+      } finally {
         setIsLoading(false);
-        setAvailableHours(getFilteredHours());
       }
     };
 
     checkAvailability();
-  }, [selectedEmployeeId, startDate, item._id, getFilteredHours]);
+  }, [selectedEmployeeId, startDate, item?._id, getFilteredHours]);
 
   const handleSelectEmployee = (_id) => {
     setSelectedEmployeeId(_id);

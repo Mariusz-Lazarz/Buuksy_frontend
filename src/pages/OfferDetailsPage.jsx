@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Container from "../components/Container";
 import OfferDetails from "../components/OfferDetails";
 import OfferDetailsSkeleton from "../components/OfferDetailsSkeleton";
-import axios from "axios";
+import { apiService } from "../utils/apiService";
 import { useParams } from "react-router-dom";
 
 export default function OfferDetailsPage() {
@@ -11,18 +11,16 @@ export default function OfferDetailsPage() {
   const { id } = useParams();
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       setIsLoading(true);
       try {
-        const response = await axios.get(
-          `http://localhost:3001/api/v1/salons/${id}`
-        );
-        setItem(response.data);
+        const data = await apiService.fetchSalonById(id);
+        setItem(data);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching salon details:", error);
       }
       setIsLoading(false);
-    }
+    };
 
     fetchData();
   }, [id]);

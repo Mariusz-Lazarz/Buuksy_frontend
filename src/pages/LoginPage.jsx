@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 import RegisterForm from "../components/RegisterForm";
 import Container from "../components/Container";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { apiService } from "../utils/apiService";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -19,10 +19,7 @@ export default function LoginPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
-        "http://localhost:3001/api/v1/auth/login",
-        formData
-      );
+      const response = await apiService.login(formData);
       const { token, user } = response.data;
       const expiryTime = new Date().getTime() + 3600 * 1000;
 

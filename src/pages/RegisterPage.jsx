@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import axios from "axios";
+import { useState } from "react";
+import { apiService } from "../utils/apiService";
 import RegisterForm from "../components/RegisterForm";
 import Container from "../components/Container";
 import { toast } from "react-toastify";
@@ -27,10 +27,7 @@ export default function RegisterPage() {
       ) {
         return toast.error("Please check your credentials and try again!");
       }
-      const response = await axios.post(
-        "http://localhost:3001/api/v1/auth/register",
-        formData
-      );
+      const response = await apiService.register(formData);
 
       if (response.data.message === "User registered successfully") {
         setFormData({
